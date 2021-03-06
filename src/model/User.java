@@ -4,13 +4,15 @@ import java.io.Serializable;
 
 public class User implements Serializable {
     private String username;
-    private String password;
+    private String cipherPassword;
+    private final String salt;
     
     private static final long serialVersionUID = 1L;
     
-    public User(String username, String password) {
+    public User(String username, String password, String salt) {
         this.username = username;
-        this.password = password;
+        this.cipherPassword = password;
+        this.salt = salt;
     }
     
     public String getUsername() {
@@ -21,11 +23,20 @@ public class User implements Serializable {
         this.username = username;
     }
     
-    public String getPassword() {
-        return this.password;
+    public String getCipherPassword() {
+        return this.cipherPassword;
     }
     
-    public void setPassword(String password) {
-        this.password = password;
+    public void setCipherPassword(String password) {
+        this.cipherPassword = password;
+    }
+    
+    public String getSalt() {
+        return this.salt;
+    }
+    
+    @Override
+    public String toString() {
+        return this.username + ":" + this.cipherPassword + ":" + this.salt + "/";
     }
 }

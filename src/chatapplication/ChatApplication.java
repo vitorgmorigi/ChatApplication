@@ -1,4 +1,6 @@
-import org.apache.commons.codec.binary.Hex;
+package chatapplication;
+
+//import org.apache.commons.codec.binary.Hex;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
@@ -9,54 +11,45 @@ import java.util.Scanner;
 import javax.crypto.SecretKey;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 
-import security.PBKDF2UtilBCFIPS;
+import utils.PBKDF2UtilBCFIPS;
+import controllers.UserController;
+import java.io.File;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package chatapplication;
-
-/**
- *
- * @author vitor
- */
 public class ChatApplication {
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws NoSuchAlgorithmException {
+    public static void main(String[] args) throws Exception {
         PBKDF2UtilBCFIPS obj = new PBKDF2UtilBCFIPS();     
+        UserController userController = new UserController();
         
         // Instanciar um novo Security provider
         int addProvider;
         addProvider = Security.addProvider(new BouncyCastleFipsProvider());
         
+        String masterPassword;
+            
+        Scanner input = new Scanner(System.in);
+        
+        File masterPasswordFile = new File("masterkey.txt");
+        if(masterPasswordFile.exists()) {
+            System.out.println("Enter master password: ");
+            masterPassword = input.nextLine();
+        }
+        
         String username;
         String password;
-        String salt;
-        int it = 10000;
-        
-        Scanner input = new Scanner(System.in);
         
         System.out.println("Enter username: ");
         username = input.nextLine();
         
         System.out.println("Enter password: ");
         password = input.nextLine();
-
-        //senha = "123456789";
-        salt = obj.getSalt();
         
-//        System.out.println("Senha original = " + senha);
-//        System.out.println("Sal gerado = " + salt);
-//        System.out.println("Numero de iteracoes = " + it);
+        userController.createUser(username, password);
         
-        String chaveDerivada = obj.generateDerivedKey(password, salt, it);
-       
-        System.out.println("Chave derivada da senha = " + chaveDerivada );
+        
     }
     
 }

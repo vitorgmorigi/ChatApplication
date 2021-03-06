@@ -1,4 +1,4 @@
-package security;
+package utils;
 
 import org.apache.commons.codec.binary.Hex;
 
@@ -8,20 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 
-/**
- * User: Carla
- * Date: Fevereiro 2021
- */
-
 public class PBKDF2UtilBCFIPS {
-
-    /**
-     * Gerar chave derivada da senha
-     * @param key
-     * @param salt
-     * @param iterations
-     * @return
-     */
     public String generateDerivedKey(String password, String salt, Integer iterations) {
         PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), iterations, 128);
         SecretKeyFactory pbkdf2 = null;
