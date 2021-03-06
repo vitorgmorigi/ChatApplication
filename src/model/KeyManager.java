@@ -8,17 +8,17 @@ import javax.crypto.spec.PBEKeySpec;
 
 public class KeyManager {
     
-    private final int iterations;
+    private final Integer iterations;
     private final String salt;
     private final String hash;
-    private HashMap<String, User> users;
+    private final HashMap<String, User> users;
     
     
     public KeyManager(int iterations, String salt, String hash) {
         this.iterations = iterations;
         this.salt = salt;
         this.hash = hash;
-        this.users = new HashMap<String, User>();
+        this.users = new HashMap<>();
     }
 
     public int getIterations() {
@@ -59,6 +59,11 @@ public class KeyManager {
             bytes[i] = (byte)Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
         }
         return bytes;
+    }
+    
+    @Override
+    public String toString() {
+        return this.iterations.toString() + ":" + this.salt + ":" + this.hash;
     }
     
     

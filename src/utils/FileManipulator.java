@@ -5,21 +5,25 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class FileManipulator {
 
-	public void reader(String path) throws IOException {
+	public ArrayList<String> reader(String path) throws IOException {
 		BufferedReader buffRead = new BufferedReader(new FileReader(path));
-		String linha = "";
+                ArrayList<String> rows = new ArrayList<>();
+		String row = "";
 		while (true) {
-			if (linha != null) {
-				System.out.println(linha);
+			if (row != null) {
+				System.out.println(row);
 
 			} else
 				break;
-			linha = buffRead.readLine();
+			row = buffRead.readLine();
+                        rows.add(row);
 		}
 		buffRead.close();
+                return rows;
 	}
 
 	public void writer(String path, String text) throws IOException {

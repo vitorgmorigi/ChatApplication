@@ -25,7 +25,6 @@ public class UserController {
         String textFile = user.toString();
         file.writer("users.txt", textFile);
         
-        // salva esse usuário em algum lugar
     }
     
 //    private void validatePassword(String password, String cipherPassword) {

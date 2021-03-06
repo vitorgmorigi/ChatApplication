@@ -28,14 +28,14 @@ public class ChatApplication {
         int addProvider;
         addProvider = Security.addProvider(new BouncyCastleFipsProvider());
         
-        String masterPassword;
+        String typedMasterPassword;
             
         Scanner input = new Scanner(System.in);
         
         File masterPasswordFile = new File("masterkey.txt");
         if(masterPasswordFile.exists()) {
             System.out.println("Enter master password: ");
-            masterPassword = input.nextLine();
+            typedMasterPassword = input.nextLine();
         }
         
         String username;
