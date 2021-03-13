@@ -9,6 +9,16 @@ import java.security.SecureRandom;
 import javax.crypto.SecretKey;
 
 public class PBKDF2UtilBCFIPS {
+    private static PBKDF2UtilBCFIPS instance;
+    
+        public static PBKDF2UtilBCFIPS getInstance() {
+        if (instance == null) {
+            instance = new PBKDF2UtilBCFIPS();
+        }
+        return instance;
+    }
+    
+    
     public String generateDerivedKey(String password, String salt, Integer iterations) {
         PBEKeySpec spec = new PBEKeySpec(password.toCharArray(), salt.getBytes(), iterations, 128);
         SecretKeyFactory pbkdf2 = null;

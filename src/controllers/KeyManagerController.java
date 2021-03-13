@@ -6,18 +6,16 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
+import java.util.HashMap;
 import model.KeyManager;
-import org.apache.commons.codec.binary.Hex;
+import model.User;
 import utils.FileManipulator;
 import utils.PBKDF2UtilBCFIPS;
 
 public class KeyManagerController {
     private static KeyManagerController instance;
-    private PBKDF2UtilBCFIPS pbkf2 = new PBKDF2UtilBCFIPS();
-    private FileManipulator file = new FileManipulator();
+    private final PBKDF2UtilBCFIPS pbkf2 = new PBKDF2UtilBCFIPS();
+    private final FileManipulator file = new FileManipulator();
     
     public static KeyManagerController getInstance() {
         if (instance == null) {
@@ -53,6 +51,23 @@ public class KeyManagerController {
             throw new UnauthorizedException("The password is incorrect");
         }
         KeyManager keyManager = new KeyManager(iterations, dataSplitted[1], dataSplitted[2]);
+        keyManager.setUsers(loadUsers("users.txt"));
         return keyManager;       
+    }
+    
+    private HashMap<String, User> loadUsers(String path) throws IOException {
+        HashMap<String, User> users = new HashMap<>();
+        ArrayList<String> dataUsers = file.reader(path);
+        for (String user : dataUsers) {
+            if(user != null) {
+                String [] userSplitted = user.split(":");
+                String username = userSplitted[0];
+                String password = userSplitted[1];
+                String salt = userSplitted[2];
+                String iv = userSplitted[3];
+                users.put(username, new User(username, password, salt, iv));
+            }
+        }
+        return users;
     }
 }

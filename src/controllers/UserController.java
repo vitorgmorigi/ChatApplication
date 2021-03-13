@@ -1,13 +1,13 @@
 package controllers;
 
+import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import model.User;
 import utils.*;
 
 public class UserController {
     private static UserController instance;
-    private PBKDF2UtilBCFIPS pbkf2 = new PBKDF2UtilBCFIPS();
-    private FileManipulator file = new FileManipulator();
+    private final FileManipulator file = new FileManipulator();
     
     public static UserController getInstance() {
         if (instance == null) {
@@ -16,12 +16,13 @@ public class UserController {
         return instance;
     }
     
-    public void createUser(String username, String password) throws Exception {
+    public void createUser(String username, String password) throws NoSuchAlgorithmException, IOException {
         // verificar se o usuário já existe
         Integer iterations = 10000;
-        String salt = pbkf2.getSalt();
-        String cipherPassword = pbkf2.generateDerivedKey(password, salt, iterations);
-        User user = new User(username, cipherPassword, salt);
+        String salt = PBKDF2UtilBCFIPS.getInstance().getSalt();
+        String cipherPassword = PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(password, salt, iterations);
+        String iv = PBKDF2UtilBCFIPS.getInstance().getSalt();
+        User user = new User(username, cipherPassword, salt, iv);
         String textFile = user.toString();
         file.writer("users.txt", textFile);
         

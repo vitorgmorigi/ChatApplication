@@ -11,8 +11,7 @@ public class KeyManager {
     private final Integer iterations;
     private final String salt;
     private final String hash;
-    private final HashMap<String, User> users;
-    
+    private HashMap<String, User> users;    
     
     public KeyManager(Integer iterations, String salt, String hash) {
         this.iterations = iterations;
@@ -31,6 +30,10 @@ public class KeyManager {
 
     public String getHash() {
         return hash;
+    }
+    
+    public void setUsers(HashMap<String, User> users) {
+        this.users = users;
     }
     
 

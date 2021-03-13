@@ -3,18 +3,12 @@ package chatapplication;
 //import org.apache.commons.codec.binary.Hex;
 
 import controllers.KeyManagerController;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.security.Security;
 import java.util.Scanner;
-import javax.crypto.SecretKey;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 
 import utils.PBKDF2UtilBCFIPS;
 import controllers.UserController;
-import exceptions.UnauthorizedException;
 import java.io.File;
 import model.KeyManager;
 
@@ -22,6 +16,7 @@ public class ChatApplication {
 
     /**
      * @param args the command line arguments
+     * @throws java.lang.Exception
      */
     public static void main(String[] args) throws Exception {
         PBKDF2UtilBCFIPS obj = new PBKDF2UtilBCFIPS();     
@@ -43,24 +38,36 @@ public class ChatApplication {
         try {
             if(masterKeyFile.exists()) {
                 System.out.println("Enter master password: ");
-                typedMasterPassword = input.nextLine();
+                typedMasterPassword = input.next();
                 keyManager = keyManagerController.load(typedMasterPassword, masterKeyPath);
             } else {
                 System.out.println("Create your master password: ");
-                typedMasterPassword = input.nextLine();
+                typedMasterPassword = input.next();
                 keyManager = keyManagerController.create(typedMasterPassword, masterKeyPath);
             }
+            
+            System.out.println("Digite a opção desejada: ");
+            System.out.println("1 - Cadastrar usuário");
+            System.out.println("2 - Login");
+            
+            int opcao = input.nextInt();
+            
+            if(opcao == 1) {
+                String username;
+                String password;
         
-            String username;
-            String password;
+                System.out.println("Enter username: ");
+                username = input.next();
         
-            System.out.println("Enter username: ");
-            username = input.nextLine();
+                System.out.println("Enter password: ");
+                password = input.next();
         
-            System.out.println("Enter password: ");
-            password = input.nextLine();
+                userController.createUser(username, password);  
+            } else {
+                
+            }
         
-            userController.createUser(username, password);   
+ 
         } catch (Exception e) {
             e.printStackTrace();
         }       
