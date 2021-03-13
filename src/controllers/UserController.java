@@ -18,7 +18,7 @@ public class UserController {
     
     public void createUser(String username, String password) throws NoSuchAlgorithmException, IOException {
         // verificar se o usuário já existe
-        Integer iterations = 10000;
+        Integer iterations = 30000;
         String salt = PBKDF2UtilBCFIPS.getInstance().getSalt();
         String cipherPassword = PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(password, salt, iterations);
         String iv = PBKDF2UtilBCFIPS.getInstance().getSalt();

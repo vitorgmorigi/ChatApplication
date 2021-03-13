@@ -1,6 +1,6 @@
 package controllers;
 
-import exceptions.UnauthorizedException;
+import exceptions.ExceptionHandler;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -14,7 +14,10 @@ import utils.PBKDF2UtilBCFIPS;
 
 public class KeyManagerController {
     private static KeyManagerController instance;
+    private KeyManager keyManager;
     private final FileManipulator file = new FileManipulator();
+    
+    private static final int ITERATIONS = 30000;
     
     public static KeyManagerController getInstance() {
         if (instance == null) {
@@ -29,15 +32,18 @@ public class KeyManagerController {
     }
     
     public KeyManager create(String password, String path) throws NoSuchAlgorithmException, IOException {
-        int iterations = 30000;
         String salt = PBKDF2UtilBCFIPS.getInstance().getSalt();
-        String derivatedKey = PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(password, salt, iterations);
-        KeyManager keyManager = new KeyManager(iterations, salt, derivatedKey);
-        file.writer(path, keyManager.toString());
-        return keyManager;
+        String derivatedKey = PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(
+                password, 
+                salt, 
+                KeyManagerController.ITERATIONS
+        );
+        this.keyManager = new KeyManager(ITERATIONS, salt, derivatedKey);
+        file.writer(path, this.keyManager.toString());
+        return this.keyManager;
     }
     
-    public KeyManager load(String password, String path) throws UnauthorizedException, IOException, NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException {
+    public KeyManager load(String password, String path) throws Exception {
         ArrayList<String> masterKeyList = file.reader(path);
         String masterKeyData = masterKeyList.get(0);
         String [] dataSplitted = masterKeyData.split(":");
@@ -47,11 +53,11 @@ public class KeyManagerController {
         
         boolean isValid = validatePassword(password, iterations, salt, hash);
         if(!isValid) {
-            throw new UnauthorizedException("The password is incorrect");
+            throw new Exception("The password is incorrect");
         }
-        KeyManager keyManager = new KeyManager(iterations, dataSplitted[1], dataSplitted[2]);
-        keyManager.setUsers(loadUsers("users.txt"));
-        return keyManager;       
+        this.keyManager = new KeyManager(iterations, dataSplitted[1], dataSplitted[2]);
+        this.keyManager.setUsers(loadUsers("users.txt"));
+        return this.keyManager;       
     }
     
     private HashMap<String, User> loadUsers(String path) throws IOException {
@@ -70,8 +76,13 @@ public class KeyManagerController {
         return users;
     }
     
-    public void login(String username, String password) {
-        
+    public boolean login(String username, String password) throws Exception {
+        User user = this.keyManager.getUsers().get(username);
+        if(user != null) {
+            return validatePassword(password, KeyManagerController.ITERATIONS, user.getSalt(), user.getCipherPassword());
+        } else {
+            throw new Exception("The user does not exist");
+        }
         
     }
 }

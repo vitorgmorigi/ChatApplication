@@ -9,10 +9,10 @@ package exceptions;
  *
  * @author vitor
  */
-public class UnauthorizedException extends Exception {
+public class ExceptionHandler extends Exception {
     private String message;
 
-    public UnauthorizedException(String message) {
+    public ExceptionHandler(String message) {
         this.message = message;
     }
     

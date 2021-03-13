@@ -21,7 +21,7 @@ public class ChatApplication {
     public static void main(String[] args) throws Exception {
         PBKDF2UtilBCFIPS obj = new PBKDF2UtilBCFIPS();     
         UserController userController = new UserController();
-        KeyManagerController keyManagerController = new KeyManagerController();
+        KeyManagerController keyManagerController = KeyManagerController.getInstance();
         
         // Instanciar um novo Security provider
         int addProvider;
@@ -51,11 +51,11 @@ public class ChatApplication {
             System.out.println("2 - Login");
             
             int opcao = input.nextInt();
+
+            String username;
+            String password;            
             
             if(opcao == 1) {
-                String username;
-                String password;
-        
                 System.out.println("Enter username: ");
                 username = input.next();
         
@@ -64,7 +64,17 @@ public class ChatApplication {
         
                 userController.createUser(username, password);  
             } else {
+                System.out.println("Enter username: ");
+                username = input.next();
+        
+                System.out.println("Enter password: ");
+                password = input.next();
                 
+                if (keyManagerController.login(username, password)) {
+                    System.out.println("Login successful!");
+                } else {
+                    System.out.println("The user or password was incorrect!");
+                }
             }
         
  
