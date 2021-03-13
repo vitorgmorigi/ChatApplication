@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class User implements Serializable {
     private String username;
-    private final String cipherPassword;
+    private final String derivedKey;
     private final String salt;
     private final String IV;
     private final ArrayList<String> messages;
@@ -13,9 +13,9 @@ public class User implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    public User(String username, String password, String salt, String IV) {
+    public User(String username, String derivedKey, String salt, String IV) {
         this.username = username;
-        this.cipherPassword = password;
+        this.derivedKey = derivedKey;
         this.salt = salt;
         this.IV = IV;
         this.messages = new ArrayList<>();
@@ -33,8 +33,8 @@ public class User implements Serializable {
         this.username = username;
     }
     
-    public String getCipherPassword() {
-        return this.cipherPassword;
+    public String getDerivedKey() {
+        return this.derivedKey;
     }
         
     public String getSalt() {
@@ -47,6 +47,6 @@ public class User implements Serializable {
  
     @Override
     public String toString() {
-        return this.username + ":" + this.cipherPassword + ":" + this.salt + ":" + this.IV;
+        return this.username + ":" + this.derivedKey + ":" + this.salt + ":" + this.IV + ":" + this.getMessages().toString();
     }
 }

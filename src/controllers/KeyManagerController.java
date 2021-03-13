@@ -1,16 +1,19 @@
 package controllers;
 
-import exceptions.ExceptionHandler;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import model.KeyManager;
 import model.User;
 import utils.FileManipulator;
 import utils.PBKDF2UtilBCFIPS;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class KeyManagerController {
     private static KeyManagerController instance;
@@ -75,14 +78,45 @@ public class KeyManagerController {
         }
         return users;
     }
+
+    public KeyManager createUser(String username, String password) throws Exception {
+        boolean userExists = this.keyManager.getUsers().get(username) != null;
+        
+        if(!userExists) {
+            User user = UserController.getInstance().createUser(username, password);
+            this.keyManager.getUsers().put(username, user);
+            file.writer("users.txt", user.toString());
+            return this.keyManager;
+        }
+        throw new Exception("This username is already exists");
+    }
     
-    public boolean login(String username, String password) throws Exception {
+    public User login(String username, String password) throws Exception {
         User user = this.keyManager.getUsers().get(username);
         if(user != null) {
-            return validatePassword(password, KeyManagerController.ITERATIONS, user.getSalt(), user.getCipherPassword());
-        } else {
-            throw new Exception("The user does not exist");
-        }
+            boolean passwordCorrect = validatePassword(password, KeyManagerController.ITERATIONS, user.getSalt(), user.getDerivedKey());
+            if(passwordCorrect) {
+                return user;
+            }
+        } 
+        throw new Exception("The user or password is incorrect");
+            
+    }
+    
+    public KeyManager sendMessage (String destination, String cipherText) {
+        this.keyManager.getUsers().get(destination).getMessages().add(cipherText);
         
+        return this.keyManager;
+    }
+    
+    public void persistOnFile() {
+        file.deleteFile("users.txt");
+        this.keyManager.getUsers().forEach((username, user) -> {
+            try {
+                file.writer("users.txt", user.toString());
+            } catch (IOException ex) {
+                Logger.getLogger(KeyManagerController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 }

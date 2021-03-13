@@ -16,16 +16,14 @@ public class UserController {
         return instance;
     }
     
-    public void createUser(String username, String password) throws NoSuchAlgorithmException, IOException {
+    public User createUser(String username, String password) throws NoSuchAlgorithmException, IOException {
         // verificar se o usuário já existe
         Integer iterations = 30000;
         String salt = PBKDF2UtilBCFIPS.getInstance().getSalt();
         String cipherPassword = PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(password, salt, iterations);
         String iv = PBKDF2UtilBCFIPS.getInstance().getSalt();
         User user = new User(username, cipherPassword, salt, iv);
-        String textFile = user.toString();
-        file.writer("users.txt", textFile);
-        
+        return user;
     }
     
 //    private void validatePassword(String password, String cipherPassword) {
@@ -45,7 +43,7 @@ public class UserController {
     }
     
     public void sendMessage (User destination, String cipherText) {
-        
+        destination.getMessages().add(cipherText);
     }
 
 }

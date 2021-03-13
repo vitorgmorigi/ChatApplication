@@ -4,15 +4,24 @@ import java.security.Key;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import org.apache.commons.codec.binary.Hex;
 
 public class AESGCMFIPS {
+    private static AESGCMFIPS instance;
     private static final int MAC_SIZE = 128; // in bits
     
     // AES-GCM parameters
     public static final int AES_KEY_SIZE = 128; // in bits
     public static final int GCM_NONCE_LENGTH = 16; // in bytes
     public static final int GCM_TAG_LENGTH = 16; // in bytes
+    
+    public static AESGCMFIPS getInstance() {
+        if (instance == null) {
+            instance = new AESGCMFIPS();
+        }
+        return instance;
+    }
+    
+    
     
         
     public String encryptMessage(String derivedKey, String nonce, String message) throws Exception {
