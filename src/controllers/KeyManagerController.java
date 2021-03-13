@@ -14,7 +14,6 @@ import utils.PBKDF2UtilBCFIPS;
 
 public class KeyManagerController {
     private static KeyManagerController instance;
-    private final PBKDF2UtilBCFIPS pbkf2 = new PBKDF2UtilBCFIPS();
     private final FileManipulator file = new FileManipulator();
     
     public static KeyManagerController getInstance() {
@@ -25,14 +24,14 @@ public class KeyManagerController {
     }
     
     private boolean validatePassword(String typedPassword, Integer iterations, String salt, String savedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException {
-        String derivedKey = pbkf2.generateDerivedKey(typedPassword, salt, iterations);
+        String derivedKey = PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(typedPassword, salt, iterations);
         return derivedKey.equals(savedPassword); 
     }
     
     public KeyManager create(String password, String path) throws NoSuchAlgorithmException, IOException {
         int iterations = 30000;
-        String salt = pbkf2.getSalt();
-        String derivatedKey = pbkf2.generateDerivedKey(password, salt, iterations);
+        String salt = PBKDF2UtilBCFIPS.getInstance().getSalt();
+        String derivatedKey = PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(password, salt, iterations);
         KeyManager keyManager = new KeyManager(iterations, salt, derivatedKey);
         file.writer(path, keyManager.toString());
         return keyManager;
@@ -69,5 +68,10 @@ public class KeyManagerController {
             }
         }
         return users;
+    }
+    
+    public void login(String username, String password) {
+        
+        
     }
 }
