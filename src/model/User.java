@@ -13,12 +13,12 @@ public class User implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    public User(String username, String derivedKey, String salt, String IV) {
+    public User(String username, String derivedKey, String salt, String IV, ArrayList<String> messages) {
         this.username = username;
         this.derivedKey = derivedKey;
         this.salt = salt;
         this.IV = IV;
-        this.messages = new ArrayList<>();
+        this.messages = messages;
     }
     
     public String getUsername() {
@@ -44,9 +44,14 @@ public class User implements Serializable {
     public ArrayList<String> getMessages() {
         return messages;
     }
+    
+    private String formatMessages() {
+        String list = this.getMessages().toString();
+        return list.substring(1, list.length()- 1);
+    }
  
     @Override
     public String toString() {
-        return this.username + ":" + this.derivedKey + ":" + this.salt + ":" + this.IV + ":" + this.getMessages().toString();
+        return this.username + ":" + this.derivedKey + ":" + this.salt + ":" + this.IV + ":" + this.formatMessages();
     }
 }

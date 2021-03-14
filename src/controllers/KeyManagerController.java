@@ -72,7 +72,15 @@ public class KeyManagerController {
                 String password = userSplitted[1];
                 String salt = userSplitted[2];
                 String iv = userSplitted[3];
-                users.put(username, new User(username, password, salt, iv));
+                ArrayList<String> listMessages = new ArrayList<>();
+                if (userSplitted.length >= 5) {
+                    String [] messages = userSplitted[4].split(",");
+                    for (String message : messages) {
+                        listMessages.add(message);
+                    }
+                }
+
+                users.put(username, new User(username, password, salt, iv, listMessages));
             }
         }
         return users;

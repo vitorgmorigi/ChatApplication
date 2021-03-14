@@ -2,6 +2,7 @@ package controllers;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import model.User;
 import utils.*;
 
@@ -22,7 +23,7 @@ public class UserController {
         String salt = PBKDF2UtilBCFIPS.getInstance().getSalt();
         String cipherPassword = PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(password, salt, iterations);
         String iv = PBKDF2UtilBCFIPS.getInstance().getSalt();
-        User user = new User(username, cipherPassword, salt, iv);
+        User user = new User(username, cipherPassword, salt, iv, new ArrayList<>());
         return user;
     }
     
