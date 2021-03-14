@@ -15,11 +15,9 @@ public class FileManipulator {
                 ArrayList<String> rows = new ArrayList<>();
 		String row = "";
 		while (true) {
-			if (row != null) {
-				System.out.println(row);
-
-			} else
+			if (row == null) {
 				break;
+			} 
 			row = buffRead.readLine();
                         rows.add(row);
 		}

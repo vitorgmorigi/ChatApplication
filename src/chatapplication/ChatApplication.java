@@ -7,7 +7,6 @@ import java.security.Security;
 import java.util.Scanner;
 import org.bouncycastle.jcajce.provider.BouncyCastleFipsProvider;
 
-import utils.PBKDF2UtilBCFIPS;
 import controllers.UserController;
 import java.io.File;
 import model.KeyManager;
