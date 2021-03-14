@@ -100,6 +100,7 @@ public class KeyManagerController {
             User user = UserController.getInstance().createUser(username, password);
             this.keyManager.getUsers().put(username, user);
             file.writer("users.txt", user.toString());
+            persistOnFile();
             return this.keyManager;
         }
         throw new Exception("O usuário já existe!");
@@ -121,6 +122,8 @@ public class KeyManagerController {
         String cipherMessage = AESGCMFIPS.getInstance().encryptMessage(destinatary.getDerivedKey(), destinatary.getIV(), message);
         System.out.println("O que o homem do meio está vendo: " + cipherMessage);
         this.keyManager.getUsers().get(destinatary.getUsername()).getMessages().add(cipherMessage);
+        
+        persistOnFile();
         
         return this.keyManager;
     }

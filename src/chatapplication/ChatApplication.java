@@ -124,7 +124,7 @@ public class ChatApplication {
             
         }
         
-        keyManagerController.persistOnFile();
+//        keyManagerController.persistOnFile();
     }
     
 }
