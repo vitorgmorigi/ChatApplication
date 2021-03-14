@@ -1,11 +1,7 @@
 package utils;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Base64;
 import javax.crypto.Cipher;
-import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.crypto.spec.GCMParameterSpec;
 import org.apache.commons.codec.binary.Hex;
@@ -26,9 +22,6 @@ public class AESGCMFIPS {
         }
         return instance;
     }
-    
-    
-    
         
     public String encryptMessage(String derivedKey, String nonce, String message) throws Exception {
         Key key;
@@ -93,20 +86,6 @@ public class AESGCMFIPS {
         }
         
         return buf.toString();
-    }
-    
-    private static byte[] toByteArray(
-        String string)
-    {
-        byte[]	bytes = new byte[string.length()];
-        char[]  chars = string.toCharArray();
-        
-        for (int i = 0; i != chars.length; i++)
-        {
-            bytes[i] = (byte)chars[i];
-        }
-        
-        return bytes;
     }
 
 }
