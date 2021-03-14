@@ -1,13 +1,19 @@
 package utils;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Arrays;
+import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.spec.GCMParameterSpec;
+import org.apache.commons.codec.binary.Hex;
 
 public class AESGCMFIPS {
     private static AESGCMFIPS instance;
     private static final int MAC_SIZE = 128; // in bits
+    private static String digits = "0123456789abcdef";
     
     // AES-GCM parameters
     public static final int AES_KEY_SIZE = 128; // in bits
@@ -30,13 +36,17 @@ public class AESGCMFIPS {
 
         in = Cipher.getInstance("AES/GCM/NoPadding", "BCFIPS");
 
-        key = new SecretKeySpec(derivedKey.getBytes(), "AES");
+        key = new SecretKeySpec(Hex.decodeHex(derivedKey.toCharArray()), "AES");
+        
+        GCMParameterSpec​ gcmParameters = new GCMParameterSpec​(MAC_SIZE, Hex.decodeHex(nonce.toCharArray()));
 
-        in.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(nonce.getBytes()));
+        in.init(Cipher.ENCRYPT_MODE, key, gcmParameters);
 
         byte[] enc = in.doFinal(message.getBytes());
+         
+        String cipherMessage = toHex(enc, enc.length);
         
-        return toString(enc, enc.length);
+        return cipherMessage;
     }
     
     public String decryptMessage(String derivedKey, String nonce, String cipherMessage) throws Exception {
@@ -45,11 +55,15 @@ public class AESGCMFIPS {
 
         out = Cipher.getInstance("AES/GCM/NoPadding", "BCFIPS");
 
-        key = new SecretKeySpec(derivedKey.getBytes(), "AES");
+        key = new SecretKeySpec(Hex.decodeHex(derivedKey.toCharArray()), "AES");
+        
+        GCMParameterSpec​ gcmParameters = new GCMParameterSpec​(MAC_SIZE, Hex.decodeHex(nonce.toCharArray()));
 
-        out.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(nonce.getBytes()));
+        out.init(Cipher.DECRYPT_MODE, key, gcmParameters);
 
-        byte[] dec = out.doFinal(cipherMessage.getBytes());
+        byte[] dec = out.doFinal(Hex.decodeHex(cipherMessage.toCharArray()));
+        
+        String decipherMessage = toString(dec, dec.length);
         
         return toString(dec, dec.length);
     }
@@ -64,6 +78,35 @@ public class AESGCMFIPS {
         }
         
         return new String(chars);
+    }
+    
+    private static String toHex(byte[] data, int length)
+    {
+        StringBuffer	buf = new StringBuffer();
+        
+        for (int i = 0; i != length; i++)
+        {
+            int	v = data[i] & 0xff;
+            
+            buf.append(digits.charAt(v >> 4));
+            buf.append(digits.charAt(v & 0xf));
+        }
+        
+        return buf.toString();
+    }
+    
+    private static byte[] toByteArray(
+        String string)
+    {
+        byte[]	bytes = new byte[string.length()];
+        char[]  chars = string.toCharArray();
+        
+        for (int i = 0; i != chars.length; i++)
+        {
+            bytes[i] = (byte)chars[i];
+        }
+        
+        return bytes;
     }
 
 }

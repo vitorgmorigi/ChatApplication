@@ -14,6 +14,7 @@ import utils.PBKDF2UtilBCFIPS;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import utils.AESGCMFIPS;
 
 public class KeyManagerController {
     private static KeyManagerController instance;
@@ -78,6 +79,10 @@ public class KeyManagerController {
         }
         return users;
     }
+    
+    public User getUserByUsername(String username) {
+        return this.keyManager.getUsers().get(username);
+    }
 
     public KeyManager createUser(String username, String password) throws Exception {
         boolean userExists = this.keyManager.getUsers().get(username) != null;
@@ -103,10 +108,22 @@ public class KeyManagerController {
             
     }
     
-    public KeyManager sendMessage (String destination, String cipherText) {
-        this.keyManager.getUsers().get(destination).getMessages().add(cipherText);
+    public KeyManager sendMessage (User destinatary, String message) throws Exception {
+        String cipherMessage = AESGCMFIPS.getInstance().encryptMessage(destinatary.getDerivedKey(), destinatary.getIV(), message);
+        this.keyManager.getUsers().get(destinatary.getUsername()).getMessages().add(cipherMessage);
         
         return this.keyManager;
+    }
+    
+    public String readMessages(User loggedUser) throws Exception {
+        ArrayList<String> decryptedMessages = new ArrayList<>();
+        
+        for(String message : loggedUser.getMessages()) {
+            String decryptedMessage = AESGCMFIPS.getInstance().decryptMessage(loggedUser.getDerivedKey(), loggedUser.getIV(), message);
+            decryptedMessages.add(decryptedMessage);
+        }
+        
+        return decryptedMessages.toString();
     }
     
     public void persistOnFile() {

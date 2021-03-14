@@ -92,22 +92,24 @@ public class ChatApplication {
                     case "logged":
                         System.out.println("3 - Escrever uma mensagem");
                         System.out.println("4 - Ler mensagens");
-                        System.out.println("5 - Sair");
+                        System.out.println("5 - Logout");
                         typedOption = input.nextInt();
                         switch(typedOption) {
                             case 3:
                                 System.out.println("Digite o destinatário: ");
-                                String destinatary = input.next();
+                                String usernameDestinatary = input.next();
+                                User userDestinatary = keyManagerController.getUserByUsername(usernameDestinatary);
                                 System.out.println("Digite a mensagem: ");
                                 String message = input.next();
-                                String cipherMessage = gcmUtils.encryptMessage(loggedUser.getDerivedKey(), loggedUser.getIV(), message);
-                                keyManager = keyManagerController.sendMessage(destinatary, cipherMessage);
+                                keyManager = keyManagerController.sendMessage(userDestinatary, message);
                                 break;
+
                             case 4:
+                                System.out.println(keyManagerController.readMessages(loggedUser));
                                 break;
                                 
                             default:
-                                status = "quit";
+                                status = "login";
                                 break;
                         }
                         break;
