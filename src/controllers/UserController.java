@@ -18,7 +18,6 @@ public class UserController {
     }
     
     public User createUser(String username, String password) throws NoSuchAlgorithmException, IOException {
-        // verificar se o usuário já existe
         Integer iterations = 30000;
         String salt = PBKDF2UtilBCFIPS.getInstance().getSalt();
         String cipherPassword = PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(password, salt, iterations);
@@ -26,25 +25,5 @@ public class UserController {
         User user = new User(username, cipherPassword, salt, iv, new ArrayList<>());
         return user;
     }
-    
-//    private void validatePassword(String password, String cipherPassword) {
-//        
-//        
-//    }
-    
-    public void login(String username, String password) {
-        // verificar se o usuário já existe
-        
-        // chama validate password
-        
-        // calcula o PBKDF2 da senha informada pelo usuário
-        
-        // compara se a hash da senha infomada é igual a hash salvada no banco
-        
-    }
-    
-    public void sendMessage (User destination, String cipherText) {
-        destination.getMessages().add(cipherText);
-    }
-
+   
 }
