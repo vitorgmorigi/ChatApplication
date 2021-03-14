@@ -76,7 +76,10 @@ public class KeyManagerController {
                 if (userSplitted.length >= 5) {
                     String [] messages = userSplitted[4].split(",");
                     for (String message : messages) {
-                        listMessages.add(message);
+                        if(message != null || !message.equals("")) {
+                            listMessages.add(message.trim());
+                        }
+                        
                     }
                 }
 
@@ -116,6 +119,7 @@ public class KeyManagerController {
     
     public KeyManager sendMessage (User destinatary, String message) throws Exception {
         String cipherMessage = AESGCMFIPS.getInstance().encryptMessage(destinatary.getDerivedKey(), destinatary.getIV(), message);
+        System.out.println("O que o homem do meio está vendo: " + cipherMessage);
         this.keyManager.getUsers().get(destinatary.getUsername()).getMessages().add(cipherMessage);
         
         return this.keyManager;
@@ -136,7 +140,7 @@ public class KeyManagerController {
         file.deleteFile("users.txt");
         this.keyManager.getUsers().forEach((username, user) -> {
             try {
-                file.writer("users.txt", user.toString());
+                file.writer("users.txt", user.toString().trim());
             } catch (IOException ex) {
                 Logger.getLogger(KeyManagerController.class.getName()).log(Level.SEVERE, null, ex);
             }

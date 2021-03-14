@@ -47,11 +47,12 @@ public class User implements Serializable {
     
     private String formatMessages() {
         String list = this.getMessages().toString();
-        return list.substring(1, list.length()- 1);
+        return list.substring(1, list.length()- 1).trim();
     }
  
     @Override
     public String toString() {
-        return this.username + ":" + this.derivedKey + ":" + this.salt + ":" + this.IV + ":" + this.formatMessages();
+        String userString = this.username + ":" + this.derivedKey + ":" + this.salt + ":" + this.IV + ":" + this.formatMessages();
+        return userString.trim();
     }
 }
