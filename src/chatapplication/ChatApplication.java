@@ -45,11 +45,11 @@ public class ChatApplication {
                 switch(status) {
                     case "masterkey":
                         if(masterKeyFile.exists()) {
-                            System.out.println("Enter master password: ");
+                            System.out.println("Digite a senha mestre: ");
                             typedMasterPassword = input.nextLine();
                             keyManager = keyManagerController.load(typedMasterPassword, masterKeyPath);
                         } else {
-                            System.out.println("Create your master password: ");
+                            System.out.println("Crie sua senha mestre: ");
                             typedMasterPassword = input.nextLine();
                             keyManager = keyManagerController.create(typedMasterPassword, masterKeyPath);
                         }
@@ -76,9 +76,9 @@ public class ChatApplication {
                                 keyManager = keyManagerController.createUser(username, password);
                                 break;
                             case 2:
-                                System.out.println("Enter username: ");
+                                System.out.println("Digite o usuário: ");
                                 username = input.nextLine();
-                                System.out.println("Enter password: ");
+                                System.out.println("Digite a senha: ");
                                 password = input.nextLine();
                                 loggedUser = keyManagerController.login(username, password);
                                 status = "logged";

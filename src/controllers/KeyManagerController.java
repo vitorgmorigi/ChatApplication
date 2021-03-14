@@ -6,12 +6,10 @@ import java.security.NoSuchProviderException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import model.KeyManager;
 import model.User;
 import utils.FileManipulator;
 import utils.PBKDF2UtilBCFIPS;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.AESGCMFIPS;
@@ -57,7 +55,7 @@ public class KeyManagerController {
         
         boolean isValid = validatePassword(password, iterations, salt, hash);
         if(!isValid) {
-            throw new Exception("The password is incorrect");
+            throw new Exception("Credenciais incorretas!");
         }
         this.keyManager = new KeyManager(iterations, dataSplitted[1], dataSplitted[2]);
         this.keyManager.setUsers(loadUsers("users.txt"));
@@ -93,7 +91,7 @@ public class KeyManagerController {
             file.writer("users.txt", user.toString());
             return this.keyManager;
         }
-        throw new Exception("This username is already exists");
+        throw new Exception("O usuário já existe!");
     }
     
     public User login(String username, String password) throws Exception {
@@ -104,7 +102,7 @@ public class KeyManagerController {
                 return user;
             }
         } 
-        throw new Exception("The user or password is incorrect");
+        throw new Exception("Credenciais incorretas!");
             
     }
     
