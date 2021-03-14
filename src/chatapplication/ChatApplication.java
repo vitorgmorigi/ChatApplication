@@ -47,11 +47,11 @@ public class ChatApplication {
                     case "masterkey":
                         if(masterKeyFile.exists()) {
                             System.out.println("Enter master password: ");
-                            typedMasterPassword = input.next();
+                            typedMasterPassword = input.nextLine();
                             keyManager = keyManagerController.load(typedMasterPassword, masterKeyPath);
                         } else {
                             System.out.println("Create your master password: ");
-                            typedMasterPassword = input.next();
+                            typedMasterPassword = input.nextLine();
                             keyManager = keyManagerController.create(typedMasterPassword, masterKeyPath);
                         }
                         status = "login";
@@ -63,6 +63,7 @@ public class ChatApplication {
                         System.out.println("5 - Sair");
 
                         typedOption = input.nextInt();
+                        input.nextLine();
 
                         String username;
                         String password;
@@ -70,16 +71,16 @@ public class ChatApplication {
                         switch (typedOption) {
                             case 1:
                                 System.out.println("Enter username: ");
-                                username = input.next();
+                                username = input.nextLine();
                                 System.out.println("Enter password: ");
-                                password = input.next();
+                                password = input.nextLine();
                                 keyManager = keyManagerController.createUser(username, password);
                                 break;
                             case 2:
                                 System.out.println("Enter username: ");
-                                username = input.next();
+                                username = input.nextLine();
                                 System.out.println("Enter password: ");
-                                password = input.next();
+                                password = input.nextLine();
                                 loggedUser = keyManagerController.login(username, password);
                                 status = "logged";
                                 break;
@@ -94,13 +95,14 @@ public class ChatApplication {
                         System.out.println("4 - Ler mensagens");
                         System.out.println("5 - Logout");
                         typedOption = input.nextInt();
+                        input.nextLine();
                         switch(typedOption) {
                             case 3:
                                 System.out.println("Digite o destinatário: ");
-                                String usernameDestinatary = input.next();
+                                String usernameDestinatary = input.nextLine();
                                 User userDestinatary = keyManagerController.getUserByUsername(usernameDestinatary);
                                 System.out.println("Digite a mensagem: ");
-                                String message = input.next();
+                                String message = input.nextLine();
                                 keyManager = keyManagerController.sendMessage(userDestinatary, message);
                                 break;
 
