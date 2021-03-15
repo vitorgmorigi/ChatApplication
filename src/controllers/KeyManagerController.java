@@ -1,5 +1,6 @@
 package controllers;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -28,8 +29,11 @@ public class KeyManagerController {
         return instance;
     }
     
-    private boolean validatePassword(String typedPassword, Integer iterations, String salt, String savedPassword) throws NoSuchAlgorithmException, InvalidKeySpecException, NoSuchProviderException {
-        String derivedKey = PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(typedPassword, salt, iterations);
+    public String getDerivedKey(String typedPassword, Integer iterations, String salt) {
+        return PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(typedPassword, salt, iterations);
+    }   
+    
+    private boolean validatePassword(String derivedKey, String savedPassword) {
         return derivedKey.equals(savedPassword); 
     }
     
@@ -42,6 +46,7 @@ public class KeyManagerController {
         );
         this.keyManager = new KeyManager(ITERATIONS, salt, derivatedKey);
         file.writer(path, this.keyManager.toString());
+//        FileManipulator.getInstance().createOrGetFile("users.encrypted");
         return this.keyManager;
     }
     
@@ -53,10 +58,13 @@ public class KeyManagerController {
         String salt = dataSplitted[1];
         String hash = dataSplitted[2];
         
-        boolean isValid = validatePassword(password, iterations, salt, hash);
+        String derivedKeyGenerated = getDerivedKey(password, iterations, salt);
+        
+        boolean isValid = validatePassword(derivedKeyGenerated, hash);
         if(!isValid) {
             throw new Exception("Credenciais incorretas!");
         }
+        FileManipulator.getInstance().decryptManagerFile(derivedKeyGenerated);
         this.keyManager = new KeyManager(iterations, dataSplitted[1], dataSplitted[2]);
         this.keyManager.setUsers(loadUsers("users.txt"));
         return this.keyManager;       
@@ -109,7 +117,8 @@ public class KeyManagerController {
     public User login(String username, String password) throws Exception {
         User user = this.keyManager.getUsers().get(username);
         if(user != null) {
-            boolean passwordCorrect = validatePassword(password, KeyManagerController.ITERATIONS, user.getSalt(), user.getDerivedKey());
+            String derivedKeyGenerated = getDerivedKey(password, ITERATIONS, user.getSalt());
+            boolean passwordCorrect = validatePassword(derivedKeyGenerated, user.getDerivedKey());
             if(passwordCorrect) {
                 return user;
             }
@@ -148,5 +157,9 @@ public class KeyManagerController {
                 Logger.getLogger(KeyManagerController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+    }
+    
+    public KeyManager getKeyManager() {
+        return this.keyManager;
     }
 }
