@@ -9,7 +9,7 @@ import org.apache.commons.codec.binary.Hex;
 public class AESGCMFIPS {
     private static AESGCMFIPS instance;
     private static final int MAC_SIZE = 128; // in bits
-    private static String digits = "0123456789abcdef";
+    private static final String digits = "0123456789abcdef";
     
     // AES-GCM parameters
     public static final int AES_KEY_SIZE = 128; // in bits
