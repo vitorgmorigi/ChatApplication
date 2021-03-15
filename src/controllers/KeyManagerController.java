@@ -1,10 +1,7 @@
 package controllers;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import model.KeyManager;
@@ -14,6 +11,7 @@ import utils.PBKDF2UtilBCFIPS;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import utils.AESGCMFIPS;
+import utils.Constants;
 
 public class KeyManagerController {
     private static KeyManagerController instance;
@@ -37,7 +35,7 @@ public class KeyManagerController {
         return derivedKey.equals(savedPassword); 
     }
     
-    public KeyManager create(String password, String path) throws NoSuchAlgorithmException, IOException {
+    public KeyManager create(String password, String path) throws NoSuchAlgorithmException, IOException, Exception {
         String salt = PBKDF2UtilBCFIPS.getInstance().getSalt();
         String derivatedKey = PBKDF2UtilBCFIPS.getInstance().generateDerivedKey(
                 password, 
@@ -46,7 +44,6 @@ public class KeyManagerController {
         );
         this.keyManager = new KeyManager(ITERATIONS, salt, derivatedKey);
         file.writer(path, this.keyManager.toString());
-//        FileManipulator.getInstance().createOrGetFile("users.encrypted");
         return this.keyManager;
     }
     
@@ -64,10 +61,15 @@ public class KeyManagerController {
         if(!isValid) {
             throw new Exception("Credenciais incorretas!");
         }
-        FileManipulator.getInstance().decryptManagerFile(derivedKeyGenerated);
+        
         this.keyManager = new KeyManager(iterations, dataSplitted[1], dataSplitted[2]);
-        this.keyManager.setUsers(loadUsers("users.txt"));
-        return this.keyManager;       
+        
+        if(FileManipulator.getInstance().managerFileExists()) {
+            FileManipulator.getInstance().decryptManagerFile(derivedKeyGenerated);
+            this.keyManager.setUsers(loadUsers(Constants.GERENCIADOR_FILE.getValue()));
+        }
+        
+        return this.keyManager; 
     }
     
     private HashMap<String, User> loadUsers(String path) throws IOException {
@@ -97,8 +99,12 @@ public class KeyManagerController {
         return users;
     }
     
-    public User getUserByUsername(String username) {
-        return this.keyManager.getUsers().get(username);
+    public User getUserByUsername(String username) throws Exception {
+        User user = this.keyManager.getUsers().get(username);
+        if(user == null) {
+            throw new Exception("O usuário não existe");
+        }
+        return user;
     }
 
     public KeyManager createUser(String username, String password) throws Exception {
@@ -107,7 +113,7 @@ public class KeyManagerController {
         if(!userExists) {
             User user = UserController.getInstance().createUser(username, password);
             this.keyManager.getUsers().put(username, user);
-            file.writer("users.txt", user.toString());
+            file.writer(Constants.GERENCIADOR_FILE.getValue(), user.toString());
             persistOnFile();
             return this.keyManager;
         }
@@ -149,10 +155,10 @@ public class KeyManagerController {
     }
     
     public void persistOnFile() {
-        file.deleteFile("users.txt");
+        file.deleteFile(Constants.GERENCIADOR_FILE.getValue());
         this.keyManager.getUsers().forEach((username, user) -> {
             try {
-                file.writer("users.txt", user.toString().trim());
+                file.writer(Constants.GERENCIADOR_FILE.getValue(), user.toString().trim());
             } catch (IOException ex) {
                 Logger.getLogger(KeyManagerController.class.getName()).log(Level.SEVERE, null, ex);
             }

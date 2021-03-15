@@ -24,9 +24,8 @@ public class FileManipulator {
     private static FileManipulator instance;
     private static final String ALGORITHM = "AES";
     private static final String TRANSFORMATION = "AES";
-    private File managerFile = createOrGetFile("users.txt");
-    private File encrypted = createOrGetFile("users.encrypted");
-    private File decrypted = createOrGetFile("users.decrypted");
+    private File managerFile = createOrGetFile(Constants.GERENCIADOR_FILE.getValue());
+    private File encrypted = createOrGetFile(Constants.GERENCIADOR_ENCRYPTED.getValue());
 
     public static FileManipulator getInstance() {
         if (instance == null) {
@@ -56,6 +55,10 @@ public class FileManipulator {
         buffWrite.newLine();
         buffWrite.close();
     }
+    
+    public boolean managerFileExists() {
+        return encrypted.exists();
+    }
 
     public File createOrGetFile(String path) {
         return new File(path);
@@ -69,7 +72,8 @@ public class FileManipulator {
     }
 
     public void encryptManagerFile(String password) throws Exception {
-        encrypt(password, managerFile, encrypted);
+        encrypt(password, managerFile, new File("gerenciador.encrypted"));
+        deleteFile(Constants.GERENCIADOR_FILE.getValue());
     }
     
     public void decryptManagerFile(String password) throws Exception {

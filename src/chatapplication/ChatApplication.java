@@ -12,6 +12,7 @@ import java.io.File;
 import model.KeyManager;
 import model.User;
 import utils.AESGCMFIPS;
+import utils.Constants;
 import utils.FileManipulator;
 
 public class ChatApplication {
@@ -31,7 +32,7 @@ public class ChatApplication {
         addProvider = Security.addProvider(new BouncyCastleFipsProvider());
         
         String typedMasterPassword = "";
-        String masterKeyPath = "masterkey.txt";
+        String masterKeyPath = Constants.MASTERKEY_FILE.getValue();
             
         Scanner input = new Scanner(System.in);
         KeyManager keyManager;
@@ -120,7 +121,6 @@ public class ChatApplication {
                 }
                 if(status.equals("quit")) {
                     file.encryptManagerFile(keyManagerController.getInstance().getKeyManager().getHash());
-                    file.deleteFile("users.txt");
                     break;
                 }
                     
@@ -129,8 +129,6 @@ public class ChatApplication {
             }   
             
         }
-        
-//        keyManagerController.persistOnFile();
     }
     
 }
