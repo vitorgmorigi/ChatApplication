@@ -57,6 +57,10 @@ public class FileManipulator {
     }
     
     public boolean managerFileExists() {
+        return managerFile.exists();
+    }
+    
+    public boolean encryptedFileExists() {
         return encrypted.exists();
     }
 
@@ -72,12 +76,17 @@ public class FileManipulator {
     }
 
     public void encryptManagerFile(String password) throws Exception {
-        encrypt(password, managerFile, new File("gerenciador.encrypted"));
-        deleteFile(Constants.GERENCIADOR_FILE.getValue());
+        if(managerFileExists()) {
+            encrypt(password, managerFile, encrypted);
+            deleteFile(Constants.GERENCIADOR_FILE.getValue());
+        }
+
     }
     
     public void decryptManagerFile(String password) throws Exception {
-        decrypt(password, encrypted, managerFile);
+        if(encryptedFileExists()) {
+            decrypt(password, encrypted, managerFile);
+        }
     }
 
     public static void encrypt(String key, File inputFile, File outputFile)

@@ -64,7 +64,7 @@ public class KeyManagerController {
         
         this.keyManager = new KeyManager(iterations, dataSplitted[1], dataSplitted[2]);
         
-        if(FileManipulator.getInstance().managerFileExists()) {
+        if(FileManipulator.getInstance().encryptedFileExists()) {
             FileManipulator.getInstance().decryptManagerFile(derivedKeyGenerated);
             this.keyManager.setUsers(loadUsers(Constants.GERENCIADOR_FILE.getValue()));
         }
